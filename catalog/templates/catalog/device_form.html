@@ -1,0 +1,9 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h1>{% if form.instance.pk %}Edit Device{% else %}Create Device{% endif %}</h1>
+<form method="post">{% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-primary" type="submit">Save</button>
+  <a class="btn btn-secondary" href="{% url 'catalog:device_list' %}">Cancel</a>
+</form>
+{% endblock %}

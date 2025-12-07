@@ -1,0 +1,9 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h1>Delete File</h1>
+<p>Are you sure you want to delete file "{{ object }}"?</p>
+<form method="post">{% csrf_token %}
+  <button class="btn btn-danger" type="submit">Confirm</button>
+  <a class="btn btn-secondary" href="{% url 'catalog:file_list' %}">Cancel</a>
+</form>
+{% endblock %}

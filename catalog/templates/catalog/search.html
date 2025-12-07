@@ -1,0 +1,76 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h1>Search Files</h1>
+<form method="get" class="row g-3 mb-4">
+  <div class="col-md-4">
+    <label class="form-label">File name contains</label>
+    {{ form.file_name }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Path contains</label>
+    {{ form.relative_path }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Project</label>
+    {{ form.project }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Device</label>
+    {{ form.device }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Extension</label>
+    {{ form.extension }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Tags</label>
+    {{ form.tags }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Min size (bytes)</label>
+    {{ form.size_min }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Max size (bytes)</label>
+    {{ form.size_max }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Created from</label>
+    {{ form.created_at_fs_start }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Created to</label>
+    {{ form.created_at_fs_end }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Updated from</label>
+    {{ form.updated_at_fs_start }}
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Updated to</label>
+    {{ form.updated_at_fs_end }}
+  </div>
+  <div class="col-12">
+    <button class="btn btn-primary" type="submit">Search</button>
+    <a class="btn btn-secondary" href="{% url 'catalog:search' %}">Reset</a>
+  </div>
+</form>
+<table class="table table-striped">
+  <thead><tr><th>Project</th><th>Device</th><th>Path</th><th>Extension</th><th>Size</th><th>Tags</th></tr></thead>
+  <tbody>
+    {% for file in files %}
+    <tr>
+      <td>{{ file.project.name }}</td>
+      <td>{{ file.device.name }}</td>
+      <td><a href="{% url 'catalog:file_detail' file.pk %}">{{ file.full_path }}</a></td>
+      <td>{{ file.extension }}</td>
+      <td>{{ file.size_bytes|default:'-' }}</td>
+      <td>{% for tag in file.tags.all %}<span class="badge text-bg-secondary">{{ tag.name }}</span> {% empty %}-{% endfor %}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">No results.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% include 'catalog/pagination.html' %}
+{% endblock %}
