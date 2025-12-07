@@ -1,0 +1,28 @@
+{% extends "catalog/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>{{ object.title }}</h1>
+  <div>
+    <a class="btn btn-outline-primary" href="{% url 'library:record_edit' object.pk %}">Редактировать</a>
+    <a class="btn btn-outline-danger" href="{% url 'library:record_delete' object.pk %}">Удалить</a>
+  </div>
+</div>
+<dl class="row">
+  <dt class="col-sm-3">Авторы</dt><dd class="col-sm-9">{{ object.authors|default:'—' }}</dd>
+  <dt class="col-sm-3">Год</dt><dd class="col-sm-9">{{ object.publication_year|default:'—' }}</dd>
+  <dt class="col-sm-3">Источник</dt><dd class="col-sm-9">{{ object.source|default:'—' }}</dd>
+  <dt class="col-sm-3">Теги</dt>
+  <dd class="col-sm-9">
+    {% for tag in object.tags.all %}
+      <span class="badge text-bg-secondary">{{ tag.name }}</span>
+    {% empty %}
+      —
+    {% endfor %}
+  </dd>
+  <dt class="col-sm-3">Аннотация</dt><dd class="col-sm-9">{{ object.abstract|linebreaksbr|default:'—' }}</dd>
+  <dt class="col-sm-3">Текст / примечания</dt><dd class="col-sm-9">{{ object.content|linebreaksbr|default:'—' }}</dd>
+  <dt class="col-sm-3">Создано</dt><dd class="col-sm-9">{{ object.created_at }}</dd>
+  <dt class="col-sm-3">Обновлено</dt><dd class="col-sm-9">{{ object.updated_at }}</dd>
+</dl>
+<a class="btn btn-secondary" href="{% url 'library:record_list' %}">Назад к списку</a>
+{% endblock %}
