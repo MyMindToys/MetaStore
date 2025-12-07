@@ -2,7 +2,7 @@
 __pycache__/
 *.py[codz]
 *$py.class
-
+metastore/settings.py
 # C extensions
 *.so
 .venv
