@@ -1,0 +1,22 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1>{{ file.file_name }}</h1>
+    <p><strong>Project:</strong> {{ file.project.name }}</p>
+    <p><strong>Device:</strong> {{ file.device.name }}</p>
+    <p><strong>Path:</strong> {{ file.relative_path }}</p>
+    <p><strong>Extension:</strong> {{ file.extension }}</p>
+    <p><strong>Size:</strong> {{ file.size_bytes|default:'-' }} bytes</p>
+    <p><strong>Created (fs):</strong> {{ file.created_at_fs|default:'-' }}</p>
+    <p><strong>Updated (fs):</strong> {{ file.updated_at_fs|default:'-' }}</p>
+    <p><strong>Checksum:</strong> {{ file.checksum|default:'-' }}</p>
+    <p><strong>Description:</strong> {{ file.description|default:'-' }}</p>
+    <p><strong>Tags:</strong> {% for tag in file.tags.all %}<span class="badge text-bg-secondary">{{ tag.name }}</span> {% empty %}-{% endfor %}</p>
+  </div>
+  <div>
+    <a class="btn btn-secondary" href="{% url 'catalog:file_update' file.pk %}">Edit</a>
+    <a class="btn btn-danger" href="{% url 'catalog:file_delete' file.pk %}">Delete</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h1>{% if form.instance.pk %}Edit File{% else %}Add File{% endif %}</h1>
+<form method="post">{% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn btn-primary" type="submit">Save</button>
+  <a class="btn btn-secondary" href="{% url 'catalog:file_list' %}">Cancel</a>
+</form>
+<p class="mt-3">Need a new tag? <a href="{% url 'catalog:tag_create' %}">Create one</a>.</p>
+{% endblock %}

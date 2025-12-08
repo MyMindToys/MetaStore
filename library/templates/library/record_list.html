@@ -1,0 +1,61 @@
+{% extends "catalog/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Библиографические записи</h1>
+  <div>
+    <a class="btn btn-primary" href="{% url 'library:record_add' %}">Новая запись</a>
+    <a class="btn btn-outline-secondary" href="{% url 'library:tag_list' %}">Теги</a>
+  </div>
+</div>
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-6">
+    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Поиск по названию, авторам или аннотации">
+  </div>
+  <div class="col-md-4">
+    <select name="tag" class="form-select">
+      <option value="">Все теги</option>
+      {% for tag in tags %}
+        <option value="{{ tag.id }}" {% if tag.id|stringformat:'s' == selected_tag %}selected{% endif %}>{{ tag.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2 d-grid">
+    <button type="submit" class="btn btn-secondary">Фильтр</button>
+  </div>
+</form>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>Авторы</th>
+      <th>Год</th>
+      <th>Источник</th>
+      <th>Теги</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for record in object_list %}
+      <tr>
+        <td><a href="{% url 'library:record_detail' record.pk %}">{{ record.title }}</a></td>
+        <td>{{ record.authors|default:'—' }}</td>
+        <td>{{ record.publication_year|default:'—' }}</td>
+        <td>{{ record.source|default:'—' }}</td>
+        <td>
+          {% for tag in record.tags.all %}
+            <span class="badge text-bg-secondary">{{ tag.name }}</span>
+          {% empty %}
+            —
+          {% endfor %}
+        </td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'library:record_edit' record.pk %}">Редактировать</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="text-center">Нет записей</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% include "catalog/pagination.html" %}
+{% endblock %}
