@@ -1,10 +1,48 @@
 {% extends 'catalog/base.html' %}
+{% load static %}
 {% block content %}
-<h1>{% if form.instance.pk %}Edit File{% else %}Add File{% endif %}</h1>
-<form method="post">{% csrf_token %}
-  {{ form.as_p }}
-  <button class="btn btn-primary" type="submit">Save</button>
-  <a class="btn btn-secondary" href="{% url 'catalog:file_list' %}">Cancel</a>
+<h1>{% if form.instance.pk %}Изменить файл{% else %}Добавить файл{% endif %}</h1>
+
+<div class="alert alert-info mb-3">
+  <div class="fw-bold mb-2">Автозаполнение по файлу на вашем компьютере</div>
+  <p class="small mb-2">Выберите файл — подставятся имя, расширение, размер, даты изменения и при желании контрольная сумма. Файл <strong>не отправляется</strong> на сервер, всё считается в браузере.</p>
+  <label class="form-label small text-muted mb-1" for="catalog-local-file-picker">Файл для подстановки полей</label>
+  <input type="file" id="catalog-local-file-picker" class="form-control form-control-sm">
+  <div class="form-check mt-2 mb-0">
+    <input class="form-check-input" type="checkbox" id="catalog-file-hash" checked>
+    <label class="form-check-label small" for="catalog-file-hash">Посчитать SHA-256 (до ~250 МБ; большие файлы пропустят хеш)</label>
+  </div>
+  <p class="small text-muted mt-2 mb-0">Полные пути на диске на карточке файла появятся после синхронизации <strong>metastore-scanner</strong>.</p>
+</div>
+
+<form method="post" id="catalog-file-resource-form" class="mt-3">
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="mb-3">
+    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+    {% for err in field.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+  </div>
+  {% endfor %}
+  <button class="btn btn-primary" type="submit">Сохранить</button>
+  <a class="btn btn-secondary" href="{% url 'catalog:file_list' %}">Отмена</a>
 </form>
-<p class="mt-3">Need a new tag? <a href="{% url 'catalog:tag_create' %}">Create one</a>.</p>
+<p class="mt-3">Нужен новый тег? <a href="{% url 'catalog:tag_create' %}">Создать тег</a>.</p>
+
+<script src="{% static 'catalog/js/autofill_from_file.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var picker = document.getElementById('catalog-local-file-picker');
+  var form = document.getElementById('catalog-file-resource-form');
+  var hashCb = document.getElementById('catalog-file-hash');
+  if (!picker || !form || !window.catalogAutofillFromFile) return;
+  picker.addEventListener('change', async function () {
+    await window.catalogAutofillFromFile(picker, form, {
+      mode: 'fileresource',
+      hashChecksum: hashCb ? hashCb.checked : false
+    });
+  });
+});
+</script>
 {% endblock %}

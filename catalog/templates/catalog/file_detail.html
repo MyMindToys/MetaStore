@@ -1,22 +1,52 @@
 {% extends 'catalog/base.html' %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="d-flex justify-content-between align-items-start mb-3">
   <div>
     <h1>{{ file.file_name }}</h1>
-    <p><strong>Project:</strong> {{ file.project.name }}</p>
-    <p><strong>Device:</strong> {{ file.device.name }}</p>
-    <p><strong>Path:</strong> {{ file.relative_path }}</p>
-    <p><strong>Extension:</strong> {{ file.extension }}</p>
-    <p><strong>Size:</strong> {{ file.size_bytes|default:'-' }} bytes</p>
-    <p><strong>Created (fs):</strong> {{ file.created_at_fs|default:'-' }}</p>
-    <p><strong>Updated (fs):</strong> {{ file.updated_at_fs|default:'-' }}</p>
-    <p><strong>Checksum:</strong> {{ file.checksum|default:'-' }}</p>
-    <p><strong>Description:</strong> {{ file.description|default:'-' }}</p>
-    <p><strong>Tags:</strong> {% for tag in file.tags.all %}<span class="badge text-bg-secondary">{{ tag.name }}</span> {% empty %}-{% endfor %}</p>
+    <p class="mb-1"><strong>Проект:</strong> {{ file.project.name }}</p>
+    <p class="mb-1"><strong>Устройство (учёт):</strong> {{ file.device.name }}</p>
+    <p class="mb-1"><strong>Путь в учёте (относительный):</strong> {% if file.relative_path %}<code>{{ file.relative_path }}</code>{% else %}<span class="text-muted">—</span>{% endif %}</p>
+    <p class="mb-1"><strong>Расширение:</strong> {{ file.extension }}</p>
+    <p class="mb-1"><strong>Размер:</strong> {{ file.size_bytes|default:'—' }} байт</p>
+    <p class="mb-1"><strong>Создано (ФС):</strong> {{ file.created_at_fs|default:'—' }}</p>
+    <p class="mb-1"><strong>Изменено (ФС):</strong> {{ file.updated_at_fs|default:'—' }}</p>
+    <p class="mb-1"><strong>Контрольная сумма:</strong> {{ file.checksum|default:'—' }}</p>
+    <p class="mb-1"><strong>Описание:</strong> {{ file.description|default:'—' }}</p>
+    <p class="mb-0"><strong>Теги:</strong> {% for tag in file.tags.all %}<span class="badge text-bg-secondary">{{ tag.name }}</span> {% empty %}—{% endfor %}
+      <span class="small ms-2"><a href="{% url 'catalog:tag_create' %}">Новый тег</a></span></p>
   </div>
-  <div>
-    <a class="btn btn-secondary" href="{% url 'catalog:file_update' file.pk %}">Edit</a>
-    <a class="btn btn-danger" href="{% url 'catalog:file_delete' file.pk %}">Delete</a>
+  <div class="text-nowrap">
+    <a class="btn btn-secondary" href="{% url 'catalog:file_update' file.pk %}">Изменить</a>
+    <a class="btn btn-danger" href="{% url 'catalog:file_delete' file.pk %}">Удалить</a>
   </div>
 </div>
+
+<h2 class="h5 mt-4 mb-3">Полный путь на диске</h2>
+
+{% if file.disk_locations.all %}
+<table class="table table-sm table-striped">
+  <thead>
+    <tr>
+      <th>Полный путь</th>
+      <th class="text-end">Размер</th>
+      <th>Изменён</th>
+      <th>Устройство</th>
+      <th>Корень сканирования</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for loc in file.disk_locations.all %}
+    <tr>
+      <td><code class="small text-break">{{ loc.display_absolute_path }}</code></td>
+      <td class="text-end text-nowrap">{% if loc.size_bytes is not None %}{{ loc.size_bytes }} байт{% else %}—{% endif %}</td>
+      <td class="small text-nowrap">{{ loc.mtime_fs|default:'—' }}</td>
+      <td>{{ loc.device.name }}</td>
+      <td class="small"><code class="text-break">{{ loc.storage_location.root_path }}</code></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-muted small mb-0">Путей на диске пока нет — запустите <strong>metastore-scanner</strong> на компьютере, где лежат файлы, и повторите синхронизацию.</p>
+{% endif %}
 {% endblock %}

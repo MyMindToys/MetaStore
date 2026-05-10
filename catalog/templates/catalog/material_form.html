@@ -1,0 +1,46 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+{% block content %}
+<h1>{% if object %}Изменить материал{% else %}Новый материал{% endif %}</h1>
+
+<div class="alert alert-info mb-3">
+  <div class="fw-bold mb-2">Подставить данные с локального файла</div>
+  <p class="small mb-2">Выберите файл — заполнятся поля метаданными. Файл на сервер не загружается.</p>
+  <input type="file" id="catalog-material-file-picker" class="form-control form-control-sm">
+  <div class="form-check mt-2 mb-0">
+    <input class="form-check-input" type="checkbox" id="catalog-material-hash" checked>
+    <label class="form-check-label small" for="catalog-material-hash">Посчитать SHA-256 (до ~250 МБ)</label>
+  </div>
+  <p class="small text-muted mt-2 mb-0">Данные о копиях на диске в блоке ниже на карточке появятся после синхронизации <strong>metastore-scanner</strong>.</p>
+</div>
+
+<form method="post" class="mt-3" id="catalog-material-form">
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="mb-3">
+    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+    {% for err in field.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+  </div>
+  {% endfor %}
+  <button type="submit" class="btn btn-primary">Сохранить</button>
+  <a class="btn btn-secondary" href="{% if object %}{% url 'catalog:material_detail' object.pk %}{% else %}{% url 'catalog:material_list' %}{% endif %}">Отмена</a>
+</form>
+
+<script src="{% static 'catalog/js/autofill_from_file.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var picker = document.getElementById('catalog-material-file-picker');
+  var form = document.getElementById('catalog-material-form');
+  var hashCb = document.getElementById('catalog-material-hash');
+  if (!picker || !form || !window.catalogAutofillFromFile) return;
+  picker.addEventListener('change', async function () {
+    await window.catalogAutofillFromFile(picker, form, {
+      mode: 'material',
+      hashChecksum: hashCb ? hashCb.checked : false
+    });
+  });
+});
+</script>
+{% endblock %}

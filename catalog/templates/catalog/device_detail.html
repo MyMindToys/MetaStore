@@ -3,17 +3,17 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div>
     <h1>{{ device.name }}</h1>
-    <p>Type: {{ device.get_device_type_display }}</p>
-    <p>{{ device.comment|default:'No comments' }}</p>
+    <p>Тип: {{ device.get_device_type_display }}</p>
+    <p>{{ device.comment|default:'Без комментария' }}</p>
   </div>
   <div>
-    <a class="btn btn-secondary" href="{% url 'catalog:device_update' device.pk %}">Edit</a>
-    <a class="btn btn-danger" href="{% url 'catalog:device_delete' device.pk %}">Delete</a>
+    <a class="btn btn-secondary" href="{% url 'catalog:device_update' device.pk %}">Изменить</a>
+    <a class="btn btn-danger" href="{% url 'catalog:device_delete' device.pk %}">Удалить</a>
   </div>
 </div>
-<h3>Files on this device</h3>
+<h3>Файлы на этом устройстве</h3>
 <table class="table table-bordered">
-  <thead><tr><th>Name</th><th>Project</th><th>Path</th><th>Extension</th></tr></thead>
+  <thead><tr><th>Имя</th><th>Проект</th><th>Путь</th><th>Расширение</th></tr></thead>
   <tbody>
     {% for file in files %}
     <tr>
@@ -23,7 +23,7 @@
       <td>{{ file.extension }}</td>
     </tr>
     {% empty %}
-    <tr><td colspan="4">No files for this device.</td></tr>
+    <tr><td colspan="4">На этом устройстве нет файлов.</td></tr>
     {% endfor %}
   </tbody>
 </table>

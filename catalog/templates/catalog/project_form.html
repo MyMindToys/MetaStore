@@ -1,9 +1,9 @@
 {% extends 'catalog/base.html' %}
 {% block content %}
-<h1>{% if form.instance.pk %}Edit Project{% else %}Create Project{% endif %}</h1>
+<h1>{% if form.instance.pk %}Изменить проект{% else %}Новый проект{% endif %}</h1>
 <form method="post">{% csrf_token %}
   {{ form.as_p }}
-  <button class="btn btn-primary" type="submit">Save</button>
-  <a class="btn btn-secondary" href="{% url 'catalog:project_list' %}">Cancel</a>
+  <button class="btn btn-primary" type="submit">Сохранить</button>
+  <a class="btn btn-secondary" href="{% url 'catalog:project_list' %}">Отмена</a>
 </form>
 {% endblock %}

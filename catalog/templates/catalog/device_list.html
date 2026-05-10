@@ -1,11 +1,11 @@
 {% extends 'catalog/base.html' %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h1>Devices</h1>
-  <a class="btn btn-primary" href="{% url 'catalog:device_create' %}">Create Device</a>
+  <h1>Устройства</h1>
+  <a class="btn btn-primary" href="{% url 'catalog:device_create' %}">Добавить устройство</a>
 </div>
 <table class="table table-striped">
-  <thead><tr><th>Name</th><th>Type</th><th>Files</th></tr></thead>
+  <thead><tr><th>Название</th><th>Тип</th><th>Файлов</th></tr></thead>
   <tbody>
     {% for device in devices %}
     <tr>
@@ -14,7 +14,7 @@
       <td>{{ device.files.count }}</td>
     </tr>
     {% empty %}
-    <tr><td colspan="3">No devices yet.</td></tr>
+    <tr><td colspan="3">Устройств пока нет.</td></tr>
     {% endfor %}
   </tbody>
 </table>

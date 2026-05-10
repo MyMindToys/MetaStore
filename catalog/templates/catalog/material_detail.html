@@ -1,0 +1,94 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <h1>{{ material.file_name }}</h1>
+    <p class="text-muted mb-1">
+      <span class="badge text-bg-primary">{{ material.material_kind.name }}</span>
+      {% if material.extension %}<span class="badge text-bg-light border">{{ material.extension }}</span>{% endif %}
+      {% if material.extension and material.extension|lower == 'pdf' %}<span class="badge text-bg-danger">PDF</span>{% endif %}
+    </p>
+    {% if material.topic %}<p class="mb-1"><strong>Тема:</strong> {{ material.topic }}</p>{% endif %}
+    {% if material.project %}<p class="mb-1">Проект: {{ material.project.name }}</p>{% endif %}
+    {% if material.source_path %}<p class="mb-1"><strong>Локальный путь:</strong> <code class="small">{{ material.source_path }}</code></p>{% endif %}
+    {% if material.description %}<p>{{ material.description }}</p>{% endif %}
+    <p class="mb-1">
+      {% for tag in material.tags.all %}<span class="badge text-bg-secondary">{{ tag.name }}</span> {% empty %}<span class="text-muted">Нет тегов</span>{% endfor %}
+      <span class="small ms-2"><a href="{% url 'catalog:tag_create' %}">Новый тег</a></span>
+    </p>
+  </div>
+  <div class="btn-group">
+    <a class="btn btn-outline-primary btn-sm" href="{% url 'catalog:material_update' material.pk %}">Изменить</a>
+    <a class="btn btn-outline-danger btn-sm" href="{% url 'catalog:material_delete' material.pk %}">Удалить</a>
+  </div>
+</div>
+
+<h2 class="h5 mt-4">Связанные ресурсы</h2>
+<p class="small text-muted">Файлы каталога, ссылки, DOI, папки («локальная папка»), заметки — у каждой связи можно задать свои теги.</p>
+<p><a class="btn btn-sm btn-success" href="{% url 'catalog:linked_resource_create' material.pk %}">Добавить ссылку или вложение</a></p>
+
+<table class="table table-sm table-striped">
+  <thead>
+    <tr>
+      <th>Тип</th>
+      <th>Заголовок</th>
+      <th>Теги</th>
+      <th>URL / идентификатор</th>
+      <th>Файл</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lr in linked_resources %}
+    <tr>
+      <td><span class="badge text-bg-light border">{{ lr.get_resource_type_display }}</span></td>
+      <td>{{ lr.title }}</td>
+      <td>{% for t in lr.tags.all %}<span class="badge text-bg-light border">{{ t.name }}</span> {% empty %}—{% endfor %}</td>
+      <td class="text-break">{% if lr.url %}<code>{{ lr.url }}</code>{% else %}—{% endif %}</td>
+      <td>
+        {% if lr.file_resource %}
+          <a href="{% url 'catalog:file_detail' lr.file_resource.pk %}">{{ lr.file_resource.file_name }}</a>
+          <span class="small text-muted d-block">{{ lr.file_resource.full_path }}</span>
+        {% else %}—{% endif %}
+      </td>
+      <td class="text-nowrap">
+        <a href="{% url 'catalog:linked_resource_update' material.pk lr.pk %}">изменить</a>
+        ·
+        <a href="{% url 'catalog:linked_resource_delete' material.pk lr.pk %}">удалить</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Связей пока нет.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2 class="h5 mt-4">Физические копии (сканер)</h2>
+<p class="small text-muted">Копии на дисках; для каждого пути можно задать теги (удобно для папок).</p>
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th>Устройство</th>
+      <th>Корень хранения</th>
+      <th>Относительный путь</th>
+      <th>Теги</th>
+      <th>Доступность</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for loc in locations %}
+    <tr>
+      <td>{{ loc.device.name }}</td>
+      <td class="small text-break">{{ loc.storage_location.root_path }}</td>
+      <td class="small"><code>{{ loc.relative_path }}</code></td>
+      <td>{% for t in loc.tags.all %}<span class="badge text-bg-light border">{{ t.name }}</span> {% empty %}—{% endfor %}</td>
+      <td>{{ loc.get_availability_display }}</td>
+      <td class="text-nowrap"><a href="{% url 'catalog:material_location_tags' material.pk loc.pk %}">теги</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" class="text-muted small">Пока нет строк — запустите <strong>metastore-scanner</strong> на компьютере с файлами и выполните синхронизацию.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

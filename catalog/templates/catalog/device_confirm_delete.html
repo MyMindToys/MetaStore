@@ -1,9 +1,9 @@
 {% extends 'catalog/base.html' %}
 {% block content %}
-<h1>Delete Device</h1>
-<p>Are you sure you want to delete device "{{ object }}"?</p>
+<h1>Удалить устройство</h1>
+<p>Удалить устройство «{{ object }}»?</p>
 <form method="post">{% csrf_token %}
-  <button class="btn btn-danger" type="submit">Confirm</button>
-  <a class="btn btn-secondary" href="{% url 'catalog:device_list' %}">Cancel</a>
+  <button class="btn btn-danger" type="submit">Удалить</button>
+  <a class="btn btn-secondary" href="{% url 'catalog:device_list' %}">Отмена</a>
 </form>
 {% endblock %}

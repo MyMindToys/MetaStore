@@ -3,16 +3,16 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div>
     <h1>{{ project.name }}</h1>
-    <p>{{ project.description|default:'No description' }}</p>
+    <p>{{ project.description|default:'Без описания' }}</p>
   </div>
   <div>
-    <a class="btn btn-secondary" href="{% url 'catalog:project_update' project.pk %}">Edit</a>
-    <a class="btn btn-danger" href="{% url 'catalog:project_delete' project.pk %}">Delete</a>
+    <a class="btn btn-secondary" href="{% url 'catalog:project_update' project.pk %}">Изменить</a>
+    <a class="btn btn-danger" href="{% url 'catalog:project_delete' project.pk %}">Удалить</a>
   </div>
 </div>
-<h3>Files</h3>
+<h3>Файлы</h3>
 <table class="table table-bordered">
-  <thead><tr><th>Name</th><th>Device</th><th>Path</th><th>Extension</th></tr></thead>
+  <thead><tr><th>Имя</th><th>Устройство</th><th>Путь</th><th>Расширение</th></tr></thead>
   <tbody>
     {% for file in files %}
     <tr>
@@ -22,7 +22,7 @@
       <td>{{ file.extension }}</td>
     </tr>
     {% empty %}
-    <tr><td colspan="4">No files for this project.</td></tr>
+    <tr><td colspan="4">В этом проекте нет файлов.</td></tr>
     {% endfor %}
   </tbody>
 </table>

@@ -1,0 +1,46 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Как сканировать папку — MetaStore{% endblock %}
+{% block content %}
+<h1 class="mb-3">Команды сканера</h1>
+<p class="text-muted mb-4">
+  Откройте <strong>PowerShell</strong> или <strong>командную строку</strong>, перейдите в папку, где установлен сканер (команда <code class="small">cd</code> и путь к этой папке).
+  Подставьте свои диск и папки вместо примеров. Ждите окончания — окно не закрывайте до сообщения об успехе или ошибке.
+</p>
+
+<h2 class="h5 mt-4">Основное — сканирование</h2>
+<p class="mb-1">Все пути из файла настроек <code class="small">scanner.yaml</code> рядом со сканером (если он у вас есть):</p>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli scan</pre>
+
+<p class="mb-1">Одна выбранная папка (пример — документы пользователя):</p>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli scan --path "C:\Users\ИмяПользователя\Documents"</pre>
+
+<p class="mb-1">Если команда <code class="small">metastore-scanner</code> уже доступна в системе:</p>
+<pre class="bg-light border rounded p-3 small mb-3">metastore-scanner scan --path "D:\МояПапка"</pre>
+
+<h2 class="h5 mt-4">Если нужны только файлы, уже учтённые раньше (например только PDF из базы на компьютере)</h2>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli scan --find "*.pdf" --path "C:\Users\ИмяПользователя\Downloads"</pre>
+
+<h2 class="h5 mt-4">Если нужно найти на диске все файлы по маске (не только старые записи)</h2>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli scan --find "*.pdf" --find-discover-all --path "C:\Users\ИмяПользователя\Downloads"</pre>
+
+<h2 class="h5 mt-4">Прочее</h2>
+<p class="mb-1">Очистить локальный кэш сканера на этом компьютере:</p>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli reset-cache</pre>
+
+<p class="mb-1">Отправить на сервер то, что накопилось в очереди:</p>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli sync</pre>
+
+<p class="mb-1">Проверить, отвечает ли сервер:</p>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli status</pre>
+
+<p class="mb-1">Посмотреть, как компьютер видит себя для регистрации:</p>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli device-info</pre>
+
+<p class="mb-1">Полный список ключей для команды scan:</p>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli scan --help</pre>
+
+<h2 class="h5 mt-4">После удачной отправки на сервер</h2>
+<p class="mb-0">
+  Откройте в верхнем меню пункт <strong>Разбор скана</strong>: отметьте файлы, выберите проект и теги, нажмите <strong>Сохранить выбранные</strong>.
+</p>
+{% endblock %}

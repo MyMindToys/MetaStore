@@ -1,62 +1,63 @@
 {% extends 'catalog/base.html' %}
 {% block content %}
-<h1>Search Files</h1>
+<h1>Поиск файлов</h1>
+<p class="text-muted"><a href="{% url 'catalog:literature_search' %}">Поиск списков литературы и связей</a></p>
 <form method="get" class="row g-3 mb-4">
   <div class="col-md-4">
-    <label class="form-label">File name contains</label>
+    <label class="form-label">{{ form.file_name.label }}</label>
     {{ form.file_name }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Path contains</label>
+    <label class="form-label">{{ form.relative_path.label }}</label>
     {{ form.relative_path }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Project</label>
+    <label class="form-label">{{ form.project.label }}</label>
     {{ form.project }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Device</label>
+    <label class="form-label">{{ form.device.label }}</label>
     {{ form.device }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Extension</label>
+    <label class="form-label">{{ form.extension.label }}</label>
     {{ form.extension }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Tags</label>
+    <label class="form-label">{{ form.tags.label }}</label>
     {{ form.tags }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Min size (bytes)</label>
+    <label class="form-label">{{ form.size_min.label }}</label>
     {{ form.size_min }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Max size (bytes)</label>
+    <label class="form-label">{{ form.size_max.label }}</label>
     {{ form.size_max }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Created from</label>
+    <label class="form-label">{{ form.created_at_fs_start.label }}</label>
     {{ form.created_at_fs_start }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Created to</label>
+    <label class="form-label">{{ form.created_at_fs_end.label }}</label>
     {{ form.created_at_fs_end }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Updated from</label>
+    <label class="form-label">{{ form.updated_at_fs_start.label }}</label>
     {{ form.updated_at_fs_start }}
   </div>
   <div class="col-md-4">
-    <label class="form-label">Updated to</label>
+    <label class="form-label">{{ form.updated_at_fs_end.label }}</label>
     {{ form.updated_at_fs_end }}
   </div>
   <div class="col-12">
-    <button class="btn btn-primary" type="submit">Search</button>
-    <a class="btn btn-secondary" href="{% url 'catalog:search' %}">Reset</a>
+    <button class="btn btn-primary" type="submit">Искать</button>
+    <a class="btn btn-secondary" href="{% url 'catalog:search' %}">Сбросить</a>
   </div>
 </form>
 <table class="table table-striped">
-  <thead><tr><th>Project</th><th>Device</th><th>Path</th><th>Extension</th><th>Size</th><th>Tags</th></tr></thead>
+  <thead><tr><th>Проект</th><th>Устройство</th><th>Путь</th><th>Расширение</th><th>Размер</th><th>Теги</th></tr></thead>
   <tbody>
     {% for file in files %}
     <tr>
@@ -68,7 +69,7 @@
       <td>{% for tag in file.tags.all %}<span class="badge text-bg-secondary">{{ tag.name }}</span> {% empty %}-{% endfor %}</td>
     </tr>
     {% empty %}
-    <tr><td colspan="6">No results.</td></tr>
+    <tr><td colspan="6">Ничего не найдено.</td></tr>
     {% endfor %}
   </tbody>
 </table>
