@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import json
 import sys
 from datetime import datetime, timezone
@@ -16,6 +17,26 @@ from scanner.filesystem.scanner import FilesystemScanner, ScanOptions
 from scanner.models.dto import Availability, EntryKind, ScanBatch
 from scanner.sync.service import SyncService, build_client, default_scanner_version
 from scanner.utils.logging import setup_logging
+
+
+def _extensions_to_find_patterns(ext_inputs: list[str]) -> list[str]:
+    """pdf, .DOCX → *.pdf, *.docx для режима поиска по имени."""
+    out: list[str] = []
+    seen: set[str] = set()
+    for raw in ext_inputs:
+        if not raw:
+            continue
+        for piece in re.split(r"[,;\s]+", raw.strip()):
+            token = piece.strip().lower().lstrip(".")
+            if not token:
+                continue
+            if any(c in token for c in "/\\:*?\"<>|"):
+                continue
+            pat = f"*.{token}"
+            if pat not in seen:
+                seen.add(pat)
+                out.append(pat)
+    return out
 
 
 def _parse_iso_datetime(s: str) -> datetime:
@@ -117,6 +138,11 @@ def _cmd_scan(args: argparse.Namespace) -> int:
     find_cfg = tuple(cfg.find_names) if cfg else ()
     find_patterns = tuple(dict.fromkeys(list(find_cfg) + list(find_cli)))
 
+    ext_cli = list(getattr(args, "ext", None) or [])
+    ext_cfg = list(cfg.find_extensions) if cfg else ()
+    ext_patterns = _extensions_to_find_patterns(ext_cli + ext_cfg)
+    find_patterns = tuple(dict.fromkeys(list(find_patterns) + ext_patterns))
+
     find_root_cli = [Path(p) for p in (getattr(args, "find_root", None) or [])]
 
     roots: list[Path] = []
@@ -153,7 +179,7 @@ def _cmd_scan(args: argparse.Namespace) -> int:
 
     if known_paths_only and find_patterns:
         print(
-            "Нельзя одновременно --known-paths-only и поиск по имени (--find / find_names в YAML).",
+            "Нельзя одновременно --known-paths-only и режим поиска (--find / --ext / find_names / find_extensions в YAML).",
             file=sys.stderr,
         )
         return 1
@@ -236,13 +262,13 @@ def _cmd_scan(args: argparse.Namespace) -> int:
         if opts.find_name_patterns:
             if opts.find_discover_on_disk:
                 print(
-                    f"  Режим: поиск по имени по диску (fnmatch): {', '.join(opts.find_name_patterns)} "
-                    "(--find-discover-all или find_discover_on_disk в YAML)."
+                    f"  Режим: поиск по шаблонам имён по диску: {', '.join(opts.find_name_patterns)} "
+                    "(--find / --ext, плюс --find-discover-all или find_discover_on_disk в YAML)."
                 )
             else:
                 print(
                     f"  Режим: только файлы из локальной базы под шаблонами: {', '.join(opts.find_name_patterns)} "
-                    "(полный поиск по диску: --find-discover-all)."
+                    "(--find / --ext; полный поиск по диску: --find-discover-all)."
                 )
         if not opts.known_paths_only and not opts.find_name_patterns and opts.prune_artifact_dirs:
             print("  Обход: служебные подпапки (__pycache__, .git, node_modules, venv, …) пропускаются.")
@@ -386,6 +412,12 @@ def build_parser() -> argparse.ArgumentParser:
         action="append",
         metavar="PATTERN",
         help="Искать только файлы, basename совпадает с шаблоном fnmatch (напр. *.pdf, README*). Повторите для нескольких.",
+    )
+    s_scan.add_argument(
+        "--ext",
+        action="append",
+        metavar="EXT",
+        help="Искать только файлы с расширением (pdf и .pdf то же самое). Несколько: --ext pdf --ext xlsx или в YAML find_extensions.",
     )
     s_scan.add_argument(
         "--find-root",

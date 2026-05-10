@@ -19,6 +19,8 @@ class ScannerConfig:
     known_paths_only: bool = False
     #: Шаблоны имён файла (fnmatch по basename), только такие файлы ищутся под корнями — см. find_roots / scan_paths.
     find_names: list[str] = field(default_factory=list)
+    #: Расширения без точки — то же, что шаблоны *.pdf, *.docx (дополняют find_names).
+    find_extensions: list[str] = field(default_factory=list)
     #: Корни для режима find_names (если не пусто и задан find_names); иначе используются scan_paths.
     find_roots: list[str] = field(default_factory=list)
     #: При find_names — искать совпадения по диску; иначе только файлы уже в локальной базе (по умолчанию false).
@@ -37,6 +39,7 @@ class ScannerConfig:
             device_display_name=data.get("device_display_name"),
             known_paths_only=bool(data.get("known_paths_only", False)),
             find_names=list(data.get("find_names") or []),
+            find_extensions=list(data.get("find_extensions") or []),
             find_roots=list(data.get("find_roots") or []),
             prune_artifact_dirs=bool(data.get("prune_artifact_dirs", True)),
             find_discover_on_disk=bool(data.get("find_discover_on_disk", False)),

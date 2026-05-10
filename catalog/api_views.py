@@ -199,6 +199,7 @@ def upload_scan(request):
                     size_bytes=entry.get('size_bytes'),
                     checksum_sha256=checksum[:128] if checksum else '',
                     scan_import_pending=True,
+                    scan_inbox_ignored=False,
                 )
 
             MaterialLocation.objects.update_or_create(

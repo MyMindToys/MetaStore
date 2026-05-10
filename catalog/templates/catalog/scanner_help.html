@@ -17,11 +17,17 @@
 <p class="mb-1">Если команда <code class="small">metastore-scanner</code> уже доступна в системе:</p>
 <pre class="bg-light border rounded p-3 small mb-3">metastore-scanner scan --path "D:\МояПапка"</pre>
 
+<h2 class="h5 mt-4">Только нужные расширения (PDF, Word, Excel и т.д.)</h2>
+<p class="small text-muted mb-1">Слово <code class="small">--ext</code> повторяют для каждого типа. Можно писать <code class="small">pdf</code> или <code class="small">.pdf</code>.</p>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli scan --ext pdf --ext docx --path "C:\Users\ИмяПользователя\Documents"</pre>
+
 <h2 class="h5 mt-4">Если нужны только файлы, уже учтённые раньше (например только PDF из базы на компьютере)</h2>
 <pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli scan --find "*.pdf" --path "C:\Users\ИмяПользователя\Downloads"</pre>
+<p class="small text-muted mb-1">То же через расширение:</p>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli scan --ext pdf --path "C:\Users\ИмяПользователя\Downloads"</pre>
 
 <h2 class="h5 mt-4">Если нужно найти на диске все файлы по маске (не только старые записи)</h2>
-<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli scan --find "*.pdf" --find-discover-all --path "C:\Users\ИмяПользователя\Downloads"</pre>
+<pre class="bg-light border rounded p-3 small mb-3">py -m scanner.cli scan --ext pdf --find-discover-all --path "C:\Users\ИмяПользователя\Downloads"</pre>
 
 <h2 class="h5 mt-4">Прочее</h2>
 <p class="mb-1">Очистить локальный кэш сканера на этом компьютере:</p>

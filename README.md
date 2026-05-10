@@ -9,7 +9,10 @@
 | **Корень репозитория** | Django-приложение (`catalog`), REST API `/api/v1/`, админка, веб-каталог |
 | **`metastore-scanner/`** | Локальный Python CLI: обход ФС, checksum, SQLite-кэш, синхронизация с сервером |
 
-Подробная архитектура: **[DESCRIPTION.md](DESCRIPTION.md)**.
+Подробная архитектура (краткий обзор): **[DESCRIPTION.md](DESCRIPTION.md)**.
+
+- **[TECHNICAL_ARCHITECTURE.md](TECHNICAL_ARCHITECTURE.md)** — полное техническое описание (архитектура, модули, API, потоки данных).
+- **[USER_GUIDE.md](USER_GUIDE.md)** — руководство пользователя (сайт, сканер, типичные сценарии).
 
 ## Сервер: быстрый старт
 

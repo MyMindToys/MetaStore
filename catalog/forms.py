@@ -11,6 +11,10 @@ class ProjectForm(forms.ModelForm):
             'name': 'Название',
             'description': 'Описание',
         }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'organization'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        }
 
 
 class DeviceForm(forms.ModelForm):

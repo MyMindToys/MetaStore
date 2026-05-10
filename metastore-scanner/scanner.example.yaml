@@ -10,6 +10,10 @@ scan_paths:
 # Чтобы искать все совпадения на диске под корнем: find_discover_on_disk: true или CLI --find-discover-all
 # find_names:
 #   - "*.pdf"
+# Только по расширениям (эквивалентно шаблонам *.pdf, *.docx):
+# find_extensions:
+#   - "pdf"
+#   - "docx"
 # find_discover_on_disk: false
 # find_roots:
 #   - "D:/Reports"

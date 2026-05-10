@@ -79,7 +79,7 @@ class ScanInboxView(View):
 
     def get_context(self, request):
         qs = (
-            Material.objects.filter(scan_import_pending=True)
+            Material.objects.filter(scan_import_pending=True, scan_inbox_ignored=False)
             .select_related('project', 'material_kind')
             .prefetch_related(
                 'tags',
@@ -99,29 +99,63 @@ class ScanInboxView(View):
         return {
             'page_obj': page_obj,
             'projects': Project.objects.all(),
-            'pending_count': Material.objects.filter(scan_import_pending=True).count(),
+            'pending_count': Material.objects.filter(
+                scan_import_pending=True,
+                scan_inbox_ignored=False,
+            ).count(),
         }
 
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, self.get_context(request))
 
     def post(self, request, *args, **kwargs):
-        ids = request.POST.getlist('material_id')
-        if not ids:
-            messages.warning(request, 'Не выбрано ни одной записи.')
+        def _safe_redirect():
             next_url = request.POST.get('next') or reverse('catalog:scan_inbox')
             if not next_url.startswith('/') or next_url.startswith('//'):
                 next_url = reverse('catalog:scan_inbox')
             return redirect(next_url)
 
+        ids = request.POST.getlist('material_id')
+        action = (request.POST.get('action') or 'save').strip()
+
+        if not ids:
+            messages.warning(request, 'Не выбрано ни одной записи.')
+            return _safe_redirect()
+
+        pks: list[int] = []
+        for sid in ids:
+            try:
+                pks.append(int(sid))
+            except (TypeError, ValueError):
+                continue
+
+        if action == 'delete':
+            with transaction.atomic():
+                qs = Material.objects.filter(pk__in=pks, scan_import_pending=True, scan_inbox_ignored=False)
+                n, _ = qs.delete()
+            messages.success(request, f'Удалено записей: {n}.')
+            return _safe_redirect()
+
+        if action == 'ignore':
+            with transaction.atomic():
+                n = Material.objects.filter(pk__in=pks, scan_import_pending=True, scan_inbox_ignored=False).update(
+                    scan_import_pending=False,
+                    scan_inbox_ignored=True,
+                )
+            messages.success(
+                request,
+                f'Убрано из очереди без удаления (игнор): {n}. Такие файлы не будут снова попадать сюда после следующего скана.',
+            )
+            return _safe_redirect()
+
         updated = 0
         with transaction.atomic():
-            for sid in ids:
-                try:
-                    pk = int(sid)
-                except (TypeError, ValueError):
-                    continue
-                material = Material.objects.filter(pk=pk, scan_import_pending=True).first()
+            for pk in pks:
+                material = Material.objects.filter(
+                    pk=pk,
+                    scan_import_pending=True,
+                    scan_inbox_ignored=False,
+                ).first()
                 if material is None:
                     continue
                 proj_raw = (request.POST.get(f'project_{pk}', '') or '').strip()
@@ -141,10 +175,7 @@ class ScanInboxView(View):
                 updated += 1
 
         messages.success(request, f'Сохранено записей: {updated}. Они убраны из очереди разбора.')
-        next_url = request.POST.get('next') or reverse('catalog:scan_inbox')
-        if not next_url.startswith('/') or next_url.startswith('//'):
-            next_url = reverse('catalog:scan_inbox')
-        return redirect(next_url)
+        return _safe_redirect()
 
 
 class ScannerHelpView(TemplateView):

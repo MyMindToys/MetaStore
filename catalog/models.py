@@ -127,6 +127,8 @@ class Material(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     #: Запись пришла со сканера и ещё не разобрана на странице «Разбор скана» (проект/теги).
     scan_import_pending = models.BooleanField(default=False, db_index=True)
+    #: Пользователь убрал запись из очереди «разбор скана» без удаления материала — не показывать снова в этой очереди.
+    scan_inbox_ignored = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         ordering = ['-created_at']
