@@ -1,0 +1,24 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Файлы</h1>
+  <a class="btn btn-primary" href="{% url 'catalog:file_create' %}">Добавить файл</a>
+</div>
+<table class="table table-striped">
+  <thead><tr><th>Имя</th><th>Проект</th><th>Устройство</th><th>Расширение</th><th>Размер</th></tr></thead>
+  <tbody>
+    {% for file in files %}
+    <tr>
+      <td><a href="{% url 'catalog:file_detail' file.pk %}">{{ file.file_name }}</a></td>
+      <td>{{ file.project.name }}</td>
+      <td>{{ file.device.name }}</td>
+      <td>{{ file.extension }}</td>
+      <td>{{ file.size_bytes|default:'—' }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Файлов пока нет.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% include 'catalog/pagination.html' %}
+{% endblock %}

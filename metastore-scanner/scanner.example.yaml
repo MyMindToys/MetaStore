@@ -1,0 +1,34 @@
+# Copy to scanner.yaml next to scanner.db or pass --config
+
+server_url: "http://127.0.0.1:8000"
+
+scan_paths:
+  - "C:/Users/you/Documents"
+  # - "/home/you/archive"
+
+# Поиск по шаблону имени: по умолчанию только среди файлов уже в scanner.db (не обходит весь диск).
+# Чтобы искать все совпадения на диске под корнем: find_discover_on_disk: true или CLI --find-discover-all
+# find_names:
+#   - "*.pdf"
+# Только по расширениям (эквивалентно шаблонам *.pdf, *.docx):
+# find_extensions:
+#   - "pdf"
+#   - "docx"
+# find_discover_on_disk: false
+# find_roots:
+#   - "D:/Reports"
+
+exclude_patterns:
+  - "*.tmp"
+  - "*.cache"
+
+# По умолчанию полный инвентарь не заходит в __pycache__, .git, node_modules, venv и т.п.
+# prune_artifact_dirs: true
+
+calculate_checksums: true
+checksum_md5: false
+
+# true — только уточнять пути уже в scanner.db; без полного обхода (новые файлы не попадут в список).
+# known_paths_only: false
+
+device_display_name: "My workstation"

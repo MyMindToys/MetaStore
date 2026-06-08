@@ -1,0 +1,36 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Теги</h1>
+  <a class="btn btn-primary" href="{% url 'catalog:tag_create' %}">Новый тег</a>
+</div>
+<p class="text-muted small">Переименование тега сохраняет связи с файлами, материалами и др.</p>
+<table class="table table-striped table-sm">
+  <thead>
+    <tr>
+      <th>Имя</th>
+      <th class="text-end">Файлы</th>
+      <th class="text-end">Материалы</th>
+      <th class="text-end">Связи</th>
+      <th class="text-end">Локации</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for tag in tags %}
+    <tr>
+      <td><strong>{{ tag.name }}</strong></td>
+      <td class="text-end">{{ tag.num_files }}</td>
+      <td class="text-end">{{ tag.num_materials }}</td>
+      <td class="text-end">{{ tag.num_links }}</td>
+      <td class="text-end">{{ tag.num_locations }}</td>
+      <td class="text-end text-nowrap">
+        <a href="{% url 'catalog:tag_update' tag.pk %}">Изменить</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Тегов пока нет.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

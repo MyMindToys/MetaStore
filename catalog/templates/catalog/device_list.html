@@ -1,0 +1,21 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Устройства</h1>
+  <a class="btn btn-primary" href="{% url 'catalog:device_create' %}">Добавить устройство</a>
+</div>
+<table class="table table-striped">
+  <thead><tr><th>Название</th><th>Тип</th><th>Файлов</th></tr></thead>
+  <tbody>
+    {% for device in devices %}
+    <tr>
+      <td><a href="{% url 'catalog:device_detail' device.pk %}">{{ device.name }}</a></td>
+      <td>{{ device.get_device_type_display }}</td>
+      <td>{{ device.files.count }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">Устройств пока нет.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

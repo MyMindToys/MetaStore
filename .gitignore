@@ -2,10 +2,10 @@
 __pycache__/
 *.py[codz]
 *$py.class
-
+metastore/settings.py
 # C extensions
 *.so
-
+.idea
 # Distribution / packaging
 .Python
 build/
@@ -134,12 +134,16 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
-# Environments
+# metastore-scanner: локальный конфиг машины (есть scanner.example.yaml в репозитории)
+metastore-scanner/scanner.yaml
+metastore-scanner/scanner.db
+
+# Environments (локально: py -m venv venv — каталог venv/ в корне проекта не коммитить)
 .env
 .envrc
-.venv
-env/
+.venv/
 venv/
+env/
 ENV/
 env.bak/
 venv.bak/

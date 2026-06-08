@@ -1,0 +1,9 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<h1>Удалить проект</h1>
+<p>Удалить проект «{{ object }}»?</p>
+<form method="post">{% csrf_token %}
+  <button class="btn btn-danger" type="submit">Удалить</button>
+  <a class="btn btn-secondary" href="{% url 'catalog:project_list' %}">Отмена</a>
+</form>
+{% endblock %}
